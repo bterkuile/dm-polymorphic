@@ -1,6 +1,7 @@
 module DataMapper
   module Model
     module Relationship
+      include ActiveRecord::Inflector
       
       alias :has_without_polymorphism :has
       
@@ -14,9 +15,9 @@ module DataMapper
           opts[:child_key] = ["#{as}_id".to_sym]
           opts["#{as}_#{suffix}".to_sym] = self
 
-          child_model_name = opts[:model] || opts[:class_name] || Extlib::Inflection.classify(name)
-          child_klass      = Extlib::Inflection.constantize(child_model_name)
-          belongs_to_name  = Extlib::Inflection.underscore(Extlib::Inflection.demodulize(self.name))
+          child_model_name = opts[:model] || opts[:class_name] || classify(name)
+          child_klass      = constantize(child_model_name)
+          belongs_to_name  = underscore(demodulize(self.name))
 
           has_without_polymorphism cardinality, name, *(args + [opts])
           child_klass.belongs_to "_#{as}_#{belongs_to_name}".to_sym, :child_key => opts[:child_key], :model => self
@@ -48,12 +49,12 @@ module DataMapper
           
           class_eval <<-EVIL, __FILE__, __LINE__+1
             def #{name}                                                                                                                   # def commentable
-              send('_#{name}_' + Extlib::Inflection.underscore(Extlib::Inflection.demodulize(#{name}_#{suffix}))) if #{name}_#{suffix}    #   send('_commentable_' + Extlib::Inflection.underscore(Extlib::Inflection.demodulize(commentable_class))) if commentable_class
+              send('_#{name}_' + underscore(demodulize(#{name}_#{suffix}))) if #{name}_#{suffix}    #   send('_commentable_' + underscore(demodulize(commentable_class))) if commentable_class
             end                                                                                                                           # end
         
             def #{name}=(object)                                                                                                          # def commentable=(object)
               self.#{name}_#{suffix} = object.class.name                                                                                  #   self.commentable_class = object.class.name
-              self.send('_#{name}_' + Extlib::Inflection.underscore(Extlib::Inflection.demodulize(object.class.name)) + '=', object)      #   self.send('_commentable_' + Extlib::Inflection.underscore(Extlib::Inflection.demodulize(object.class.name)) + '=', object)
+              self.send('_#{name}_' + underscore(demodulize(object.class.name)) + '=', object)      #   self.send('_commentable_' + underscore(demodulize(object.class.name)) + '=', object)
             end                                                                                                                           # end
           EVIL
         else
