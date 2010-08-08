@@ -1,6 +1,10 @@
 h1. dm-polymorphic.
 
-Please see wiki for discussion.
+This is a fork from http://github.com/hassox/dm-polymorphic
+
+The difference is that this fork works with ActiveSupport in stead of Extlib.
+
+Tested with Rails 3.0.0.rc and DataMapper 1.0
 
 The DM polymorphic gem mimics AR style polymorphism.  It has been decided that DM will not follow this path, since it
 really isn't very nice on the DB and there are other ways, that do not require DBA to cry to achieve the same result.
@@ -22,10 +26,6 @@ h2. Example Usage.
 
     belongs_to :commentable, :polymorphic => true
   
-    # OR use the old syntax
-    #
-    # is :polymorphic, :commentable
-    #
   end
     
   class Post
@@ -36,10 +36,6 @@ h2. Example Usage.
 
     has n, :comments, :as => :commentable
 
-    # OR use the old syntax
-    #
-    # has n, :comments, :polymorphically => :commentable   
-    #
   end
 
   class Article
@@ -50,10 +46,6 @@ h2. Example Usage.
 
     has n, :comments, :as => :commentable
 
-    # OR use the old syntax
-    #
-    # has n, :comments, :polymorphically => :commentable   
-    #
   end
 </pre>
 

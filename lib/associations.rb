@@ -1,7 +1,7 @@
 module DataMapper
   module Model
     module Relationship
-      include ActiveRecord::Inflector
+      include ActiveSupport::Inflector
       
       alias :has_without_polymorphism :has
       
@@ -49,12 +49,12 @@ module DataMapper
           
           class_eval <<-EVIL, __FILE__, __LINE__+1
             def #{name}                                                                                                                   # def commentable
-              send('_#{name}_' + underscore(demodulize(#{name}_#{suffix}))) if #{name}_#{suffix}    #   send('_commentable_' + underscore(demodulize(commentable_class))) if commentable_class
+              send('_#{name}_' + ActiveSupport::Inflector.underscore(ActiveSupport::Inflector.demodulize(#{name}_#{suffix}))) if #{name}_#{suffix}    #   send('_commentable_' + underscore(demodulize(commentable_class))) if commentable_class
             end                                                                                                                           # end
         
             def #{name}=(object)                                                                                                          # def commentable=(object)
               self.#{name}_#{suffix} = object.class.name                                                                                  #   self.commentable_class = object.class.name
-              self.send('_#{name}_' + underscore(demodulize(object.class.name)) + '=', object)      #   self.send('_commentable_' + underscore(demodulize(object.class.name)) + '=', object)
+              self.send('_#{name}_' + ActiveSupport::Inflector.underscore(ActiveSupport::Inflector.demodulize(object.class.name)) + '=', object)      #   self.send('_commentable_' + underscore(demodulize(object.class.name)) + '=', object)
             end                                                                                                                           # end
           EVIL
         else
